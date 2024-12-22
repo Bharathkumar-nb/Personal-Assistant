@@ -1,0 +1,6 @@
+torch
+transformers
+SpeechRecognition
+pyttsx3
+openai-whisper
+pydub

@@ -1,0 +1,12 @@
+FROM python:3.9
+
+WORKDIR /app
+
+COPY . /app
+
+RUN apt-get update && apt-get install -y \
+    libasound2-dev ffmpeg \
+    && pip install -r requirements.txt
+
+CMD ["python", "voice_to_text.py"]
+

@@ -1,0 +1,55 @@
+services:
+  voice-to-text:
+    build:
+      context: .
+      dockerfile: Dockerfile.voice-to-text
+    volumes:
+      - /mnt/d/Learning/Personal-Assistant:/app
+    #devices:
+      #- /dev/snd:/dev/snd
+    runtime: nvidia
+    environment:
+      - NVIDIA_VISIBLE_DEVICES=all
+    #restart: on-failure
+    healthcheck:
+      test: ["CMD-SHELL", "curl -f http://localhost || exit 1"]
+      interval: 1m30s
+      timeout: 10s
+      retries: 3
+
+  # text-processing:
+  #   build:
+  #     context: .
+  #     dockerfile: Dockerfile.text-processing
+  #   volumes:
+  #     - /mnt/d/Learning/Personal-Assistant/models:/app/models
+  #   devices:
+  #     - /dev/snd:/dev/snd
+  #   runtime: nvidia
+  #   environment:
+  #     - NVIDIA_VISIBLE_DEVICES=all
+  #   restart: on-failure
+  #   healthcheck:
+  #     test: ["CMD-SHELL", "curl -f http://localhost || exit 1"]
+  #     interval: 1m30s
+  #     timeout: 10s
+  #     retries: 3
+
+  # text-to-speech:
+  #   build:
+  #     context: .
+  #     dockerfile: Dockerfile.text-to-speech
+  #   volumes:
+  #     - /mnt/d/Learning/Personal-Assistant/models:/app/models
+  #   devices:
+  #     - /dev/snd:/dev/snd
+  #   runtime: nvidia
+  #   environment:
+  #     - NVIDIA_VISIBLE_DEVICES=all
+  #   restart: on-failure
+  #   healthcheck:
+  #     test: ["CMD-SHELL", "curl -f http://localhost || exit 1"]
+  #     interval: 1m30s
+  #     timeout: 10s
+  #     retries: 3
+

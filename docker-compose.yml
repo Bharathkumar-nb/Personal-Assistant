@@ -5,11 +5,14 @@ services:
       dockerfile: Dockerfile.voice-to-text
     volumes:
       - /mnt/d/Learning/Personal-Assistant:/app
+      - /mnt/wslg:/mnt/wslg # Share PulseAudio configuration
+    environment:
+      - PULSE_SERVER=unix:/mnt/wslg/PulseServer
+      - NVIDIA_VISIBLE_DEVICES=all
+    network_mode: "host" # Use host network to enable audio communication
     #devices:
       #- /dev/snd:/dev/snd
     runtime: nvidia
-    environment:
-      - NVIDIA_VISIBLE_DEVICES=all
     #restart: on-failure
     healthcheck:
       test: ["CMD-SHELL", "curl -f http://localhost || exit 1"]

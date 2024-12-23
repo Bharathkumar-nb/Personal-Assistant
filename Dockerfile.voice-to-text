@@ -1,12 +1,18 @@
-FROM python:3.9
-
-WORKDIR /app
-
-COPY . /app
+FROM python:3.9-slim
 
 RUN apt-get update && apt-get install -y \
-    libasound2-dev ffmpeg \
-    && pip install -r requirements.txt
+    libasound2-dev \
+    ffmpeg \
+    portaudio19-dev \
+    pulseaudio \
+    && rm -rf /var/lib/apt/lists/*
 
+# Pre-download Whisper model weights
+RUN pip install --no-cache-dir torch openai-whisper && \
+    python -c "import whisper; whisper.load_model('medium')"
+
+COPY requirements.txt .
+RUN pip install --no-cache-dir -r requirements.txt
+
+COPY . .
 CMD ["python", "voice_to_text.py"]
-

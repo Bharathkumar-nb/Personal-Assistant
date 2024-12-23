@@ -4,3 +4,7 @@ SpeechRecognition
 pyttsx3
 openai-whisper
 pydub
+sounddevice
+numpy
+wavio
+keyboard

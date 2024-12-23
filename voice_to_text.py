@@ -9,9 +9,13 @@ import datetime
 import time
 import multiprocessing as mp
 import os
+import redis
 
 # Ignore FutureWarnings
 warnings.filterwarnings("ignore", category=FutureWarning)
+
+# Initialize Redis client
+redis_client = redis.StrictRedis(host='localhost', port=6379, db=0)
 
 # Flag to indicate if the program should continue running
 keep_running = True
@@ -33,6 +37,7 @@ def transcribe_audio(audio_queue, result_queue, process_id):
         processing_time = end_time - start_time
         #print(f"Process {process_id} completed transcription in {processing_time:.2f} seconds.", flush=True)
         result_queue.put(result["text"])
+        redis_client.rpush('transcriptions', result["text"])
         os.remove(audio_file)  # Remove the audio file after transcription to save space
         #print(f"Process {process_id} added transcription result to result_queue.", flush=True)
 
@@ -41,16 +46,20 @@ def record_audio_segment(segment_duration, sample_rate=16000):
     audio_file = f"/app/segment_{timestamp}.wav"
     audio = sd.rec(int(segment_duration * sample_rate), samplerate=sample_rate, channels=1, dtype=np.int16)
     sd.wait()  # Wait until recording is finished
+    start_time = time.time()
     wavio.write(audio_file, audio, sample_rate, sampwidth=2)
+    end_time = time.time()
+    processing_time = end_time - start_time
+    print(f"record_audio_segment completed saving segment in {processing_time:.2f} seconds.", flush=True)
     return audio_file
 
 def signal_handler(sig, frame):
     global keep_running
     print("\nSignal handler called, stopping continuous audio capture...", flush=True)
     keep_running = False
-    sys.exit(0)
 
 signal.signal(signal.SIGINT, signal_handler)
+signal.signal(signal.SIGUSR1, signal_handler)
 
 if __name__ == "__main__":
     segment_duration = 10  # Duration of each segment in seconds

@@ -1,4 +1,9 @@
 services:
+  redis:
+    image: "redis:alpine"
+    ports:
+      - "6379:6379"
+
   voice-to-text:
     build:
       context: .
@@ -10,9 +15,9 @@ services:
       - PULSE_SERVER=unix:/mnt/wslg/PulseServer
       - NVIDIA_VISIBLE_DEVICES=all
     network_mode: "host" # Use host network to enable audio communication
-    #devices:
-      #- /dev/snd:/dev/snd
     runtime: nvidia
+    depends_on:
+      - redis
     #restart: on-failure
     healthcheck:
       test: ["CMD-SHELL", "curl -f http://localhost || exit 1"]
@@ -38,21 +43,25 @@ services:
   #     timeout: 10s
   #     retries: 3
 
-  # text-to-speech:
-  #   build:
-  #     context: .
-  #     dockerfile: Dockerfile.text-to-speech
-  #   volumes:
-  #     - /mnt/d/Learning/Personal-Assistant/models:/app/models
-  #   devices:
-  #     - /dev/snd:/dev/snd
-  #   runtime: nvidia
-  #   environment:
-  #     - NVIDIA_VISIBLE_DEVICES=all
-  #   restart: on-failure
-  #   healthcheck:
-  #     test: ["CMD-SHELL", "curl -f http://localhost || exit 1"]
-  #     interval: 1m30s
-  #     timeout: 10s
-  #     retries: 3
+  text-to-speech:
+    build:
+      context: .
+      dockerfile: Dockerfile.text-to-speech
+    volumes:
+      - /mnt/d/Learning/Personal-Assistant/models:/app/models
+      - /mnt/wslg:/mnt/wslg
+    runtime: nvidia
+    depends_on:
+      - redis
+    environment:
+      - PULSE_SERVER=unix:/mnt/wslg/PulseServer
+      - NVIDIA_VISIBLE_DEVICES=all
+      - REDIS_HOST=1.2.3.4 # Use the actual IP address of your host machine
+      - REDIS_PORT=6379
+    network_mode: "host" # Use host network to enable audio communication
+    healthcheck:
+      test: ["CMD-SHELL", "curl -f http://localhost || exit 1"]
+      interval: 1m30s
+      timeout: 10s
+      retries: 3
 

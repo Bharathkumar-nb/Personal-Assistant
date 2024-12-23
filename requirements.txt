@@ -7,4 +7,4 @@ pydub
 sounddevice
 numpy
 wavio
-keyboard
+redis

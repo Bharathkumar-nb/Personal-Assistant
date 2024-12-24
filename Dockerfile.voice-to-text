@@ -8,8 +8,7 @@ RUN apt-get update && apt-get install -y \
     && rm -rf /var/lib/apt/lists/*
 
 # Pre-download Whisper model weights
-RUN pip install --no-cache-dir torch openai-whisper && \
-    python -c "import whisper; whisper.load_model('medium')"
+RUN pip install --no-cache-dir torch openai-whisper
 
 COPY requirements.txt .
 RUN pip install --no-cache-dir -r requirements.txt

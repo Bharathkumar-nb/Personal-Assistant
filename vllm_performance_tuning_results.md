@@ -13,17 +13,17 @@
 **Experiment Parameters:**
 
 | Parameter Name             | Value 1           | Value 2 | Value 3 | Value 4 | Value 5 | Value 6 | Value 7 | Value 8 | Value 9 | Best Value |
-|----------------------------|-------------------|---------|---------|---------|---------|---------|---------|---------|---------|
-| `gpu_memory_utilization`   | 0.9 (default - d) | 0.9     | 0.95    | 0.9     | 0.98    | 0.9     | 0.9     | 0.9     | 0.9
-| `max_model_len`            | 30576             | 200     | 500     | 500     | 400     | 400     | 400     | 400     | 400
-| `max_num_seqs`             | 256 (d)           | 256     | 256     | 512     | 512     | 256     | 256     | 512     | 256
-| `block_size`               | 16 (d)            | 16      | 16      | 16      | 32      | 16      | 32      | 16      | 16
-| `quantization`             | None (d)          | None    | None    | None    | fp8     | fp8     | fp8     | fp8     | None
-| `pipeline_parallel_size`   | 1 (d)             | 1       | 1       | 1       | 1       | 1       | 1       | 1       | 1
-| `max_logprobs`             | 20 (d)            | 20      | 20      | 20      | 20      | 20      | 20      | 20      | 20
-| `cpu_offload_gb`           | 5                 | 5       | 10      | 0       | 1       | 0       | 0       | 0       | 0
-| `dtype`                    | auto (d)          | auto    | auto    | float16 | float16 | float16 | float16 | float16 | auto
-| `max_num_batched_tokens`   | None (d)          | None    | None    | None    | None    | None    | None    | None    | None
+|----------------------------|-------------------|---------|---------|---------|---------|---------|---------|---------|---------|------------|
+| `gpu_memory_utilization`   | 0.9 (default - d) | 0.9     | 0.95    | 0.9     | 0.98    | 0.9     | 0.9     | 0.9     | 0.9     |            |
+| `max_model_len`            | 30576             | 200     | 500     | 500     | 400     | 400     | 400     | 400     | 400     |            |
+| `max_num_seqs`             | 256 (d)           | 256     | 256     | 512     | 512     | 256     | 256     | 512     | 256     |            |
+| `block_size`               | 16 (d)            | 16      | 16      | 16      | 32      | 16      | 32      | 16      | 16      |            |
+| `quantization`             | None (d)          | None    | None    | None    | fp8     | fp8     | fp8     | fp8     | None    |            |
+| `pipeline_parallel_size`   | 1 (d)             | 1       | 1       | 1       | 1       | 1       | 1       | 1       | 1       |            |
+| `max_logprobs`             | 20 (d)            | 20      | 20      | 20      | 20      | 20      | 20      | 20      | 20      |            |
+| `cpu_offload_gb`           | 5                 | 5       | 10      | 0       | 1       | 0       | 0       | 0       | 0       |            |
+| `dtype`                    | auto (d)          | auto    | auto    | float16 | float16 | float16 | float16 | float16 | auto    |            |
+| `max_num_batched_tokens`   | None (d)          | None    | None    | None    | None    | None    | None    | None    | None    |            |
 
 
 

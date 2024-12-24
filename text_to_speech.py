@@ -14,8 +14,11 @@ def signal_handler(sig, frame):
 signal.signal(signal.SIGINT, signal_handler)
 signal.signal(signal.SIGUSR1, signal_handler)
 
+# Initialize the pyttsx3 engine globally
+engine = pyttsx3.init()
+
 def text_to_speech(text):
-    engine = pyttsx3.init()
+    print(text, flush=True)
     engine.say(text)
     engine.runAndWait()
 
@@ -29,7 +32,7 @@ if __name__ == "__main__":
 
     while keep_running:
         try:
-            text = redis_client.lpop('transcriptions')
+            text = redis_client.lpop('assistant_response')
             if text:
                 text_to_speech(text.decode('utf-8'))
             time.sleep(1)

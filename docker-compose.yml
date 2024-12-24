@@ -25,30 +25,34 @@ services:
       timeout: 10s
       retries: 3
 
-  # text-processing:
-  #   build:
-  #     context: .
-  #     dockerfile: Dockerfile.text-processing
-  #   volumes:
-  #     - /mnt/d/Learning/Personal-Assistant/models:/app/models
-  #   devices:
-  #     - /dev/snd:/dev/snd
-  #   runtime: nvidia
-  #   environment:
-  #     - NVIDIA_VISIBLE_DEVICES=all
-  #   restart: on-failure
-  #   healthcheck:
-  #     test: ["CMD-SHELL", "curl -f http://localhost || exit 1"]
-  #     interval: 1m30s
-  #     timeout: 10s
-  #     retries: 3
+  text-processing:
+    image: ai/meta-llama:3.1-8B-Instruct-cuda-12.6
+    volumes:
+      - /mnt/d/Learning/Personal-Assistant:/app
+    runtime: nvidia
+    depends_on:
+      - redis
+    ports:
+      - "8000:8000"
+    environment:
+      - NVIDIA_VISIBLE_DEVICES=all
+    env_file:
+      - .env
+    #restart: on-failure
+    command: ["vllm", "serve", "--max-model-len", "512", "--dtype", "float16", "--block-size", "32", "--quantization", "fp8"]
+    network_mode: "host"
+    healthcheck:
+      test: ["CMD-SHELL", "curl -f http://localhost || exit 1"]
+      interval: 1m30s
+      timeout: 10s
+      retries: 3
 
   text-to-speech:
     build:
       context: .
       dockerfile: Dockerfile.text-to-speech
     volumes:
-      - /mnt/d/Learning/Personal-Assistant/models:/app/models
+      - /mnt/d/Learning/Personal-Assistant:/app
       - /mnt/wslg:/mnt/wslg
     runtime: nvidia
     depends_on:
@@ -56,8 +60,8 @@ services:
     environment:
       - PULSE_SERVER=unix:/mnt/wslg/PulseServer
       - NVIDIA_VISIBLE_DEVICES=all
-      - REDIS_HOST=1.2.3.4 # Use the actual IP address of your host machine
-      - REDIS_PORT=6379
+    env_file:
+      - .env
     network_mode: "host" # Use host network to enable audio communication
     healthcheck:
       test: ["CMD-SHELL", "curl -f http://localhost || exit 1"]

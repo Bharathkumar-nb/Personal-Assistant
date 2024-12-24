@@ -1,8 +1,9 @@
 FROM ai/meta-llama:3.1-8B-Instruct-cuda-12.6
 
+RUN apt-get update && apt-get install -y python3-pip
+
 WORKDIR /app
+COPY text_processing.py /app
+COPY requirements.txt .
 
-COPY . /app
-
-CMD ["python", "text_processing.py"]
-
+CMD ["python3", "text_processing.py"]

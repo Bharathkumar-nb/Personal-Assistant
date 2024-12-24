@@ -50,7 +50,7 @@ def record_audio_segment(segment_duration, sample_rate=16000):
     wavio.write(audio_file, audio, sample_rate, sampwidth=2)
     end_time = time.time()
     processing_time = end_time - start_time
-    print(f"record_audio_segment completed saving segment in {processing_time:.2f} seconds.", flush=True)
+    #print(f"record_audio_segment completed saving segment in {processing_time:.2f} seconds.", flush=True)
     return audio_file
 
 def signal_handler(sig, frame):

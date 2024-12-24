@@ -14,15 +14,18 @@ import redis
 # Ignore FutureWarnings
 warnings.filterwarnings("ignore", category=FutureWarning)
 
+redis_host = os.getenv('REDIS_HOST', 'localhost')
+redis_port = int(os.getenv('REDIS_PORT', 6379))
 # Initialize Redis client
-redis_client = redis.StrictRedis(host='localhost', port=6379, db=0)
+redis_client = redis.StrictRedis(host=redis_host, port=redis_port, db=0)
 
 # Flag to indicate if the program should continue running
 keep_running = True
 
 def transcribe_audio(audio_queue, result_queue, process_id):
     print(f"Process {process_id} started.", flush=True)
-    model = whisper.load_model("medium")
+    # Changed to CPU as GPU is used for text-processing
+    model = whisper.load_model("medium", device="cpu")
     print(f"Process {process_id} model loaded.", flush=True)
     while True:
         #print(f"Process {process_id} waiting for audio file...", flush=True)

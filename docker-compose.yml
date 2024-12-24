@@ -18,6 +18,8 @@ services:
     runtime: nvidia
     depends_on:
       - redis
+    env_file:
+      - .env
     #restart: on-failure
     healthcheck:
       test: ["CMD-SHELL", "curl -f http://localhost || exit 1"]
@@ -25,21 +27,37 @@ services:
       timeout: 10s
       retries: 3
 
-  text-processing:
+  vllm-server:
     image: ai/meta-llama:3.1-8B-Instruct-cuda-12.6
-    volumes:
-      - /mnt/d/Learning/Personal-Assistant:/app
     runtime: nvidia
-    depends_on:
-      - redis
     ports:
       - "8000:8000"
     environment:
       - NVIDIA_VISIBLE_DEVICES=all
     env_file:
       - .env
+    #network_mode: "host"
+    entrypoint: ["vllm", "serve", "/models/Meta-Llama-3.1-8B-Instruct", "--served-model-name", "llm", "--max-model-len", "512", "--dtype", "float16", "--block-size", "32", "--quantization", "fp8"]
+    healthcheck:
+      test: ["CMD-SHELL", "curl -f http://localhost:8000/health || exit 1"]
+      interval: 30s
+      timeout: 10s
+      retries: 5
+
+  text-processing:
+    build:
+      context: .
+      dockerfile: Dockerfile.text-processing
+    volumes:
+      - /mnt/d/Learning/Personal-Assistant:/app
+    depends_on:
+      - redis
+      - vllm-server
+    environment:
+      - NVIDIA_VISIBLE_DEVICES=all
+    env_file:
+      - .env
     #restart: on-failure
-    command: ["vllm", "serve", "--max-model-len", "512", "--dtype", "float16", "--block-size", "32", "--quantization", "fp8"]
     network_mode: "host"
     healthcheck:
       test: ["CMD-SHELL", "curl -f http://localhost || exit 1"]

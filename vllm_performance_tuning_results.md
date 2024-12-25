@@ -61,40 +61,27 @@
 | 17 (0.9, 512, 256, 32, fp8, 1, 20, 0, float16, None)  | 6.7,4.9               | ...                                    |
 
 
-**Observations:**
-Baseline Error: The first experiment resulted in an error due to the model's maximum sequence length exceeding the KV cache limit. It highlights the importance of setting compatible values for max_model_len.
+## Observations
 
-Memory Utilization: Optimal memory utilization (0.98) was observed to significantly improve throughput, but the improvement is marginal compared to 0.9 or 0.95.
+* **Baseline Error:** The first experiment resulted in an error due to the model's maximum sequence length exceeding the KV cache limit. This highlights the importance of setting compatible values for `max_model_len`.
+* **Memory Utilization:** Optimal memory utilization (0.98) was observed to significantly improve throughput, but the improvement is marginal compared to 0.9 or 0.95.
+* **Block Size:** Increasing the `block_size` to 32 generally provided better throughput compared to the default value of 16.
+* **Quantization Impact:** Using `fp8` quantization improved performance, indicating that lower precision can help boost throughput without compromising too much on accuracy.
+* **Pipeline Parallelism:** Attempting to set `pipeline_parallel_size` to 2 resulted in an error as it requires 2 GPUs, which are not available.
+* **CPU Offloading:** CPU offloading was observed to decrease performance, so it is better set to 0.
+* **Max Number of Sequences:** Setting the `max_num_seqs` to 512 showed improvement in throughput, indicating the model's efficiency with handling larger batch sizes.
+* **Mixed Precision:** The `dtype` set to `float16` generally enhanced throughput, demonstrating the benefits of mixed precision training.
 
-Block Size: Increasing the block_size to 32 generally provided better throughput compared to the default value of 16.
+## Recommendations
 
-Quantization Impact: Using fp8 quantization improved performance, indicating that lower precision can help boost throughput without compromising too much on accuracy.
-
-Pipeline Parallelism: Attempting to set pipeline_parallel_size to 2 resulted in an error as it requires 2 GPUs, which are not available.
-
-CPU Offloading: CPU offloading was observed to decrease performance, so it is better set to 0.
-
-Max Number of Sequences: Setting the max_num_seqs to 512 showed improvement in throughput, indicating the model's efficiency with handling larger batch sizes.
-
-Mixed Precision: The dtype set to float16 generally enhanced throughput, demonstrating the benefits of mixed precision training.
-
-
-**Recommendations:**
-Sequence Length Configuration: Carefully set the max_model_len considering the constraints of the KV cache to avoid errors. Aim for optimal values around 400.
-
-Memory Utilization Tuning: Prefer using gpu_memory_utilization values of 0.9 or 0.95 to balance performance improvements and allocate resources for other purposes.
-
-Block Size Adjustments: Prefer a block size of 32, as it seems to provide a better throughput balance.
-
-Experiment with Quantization: Continue using fp8 quantization to leverage its performance benefits.
-
-Explore Pipeline Parallelism: Since increasing pipeline_parallel_size requires additional GPUs, it's recommended to test this only if more GPUs become available.
-
-Disable CPU Offloading: Set cpu_offload_gb to 0 as it was observed to decrease performance.
-
-Batch Size Optimization: Utilize a max_num_seqs of 512 to exploit the model's capacity for handling larger sequences effectively.
-
-Mixed Precision Usage: Ensure dtype is set to float16 for training to take advantage of mixed precision benefits.
+* **Sequence Length Configuration:** Carefully set the `max_model_len` considering the constraints of the KV cache to avoid errors. Aim for optimal values around 400.
+* **Memory Utilization Tuning:** Prefer using `gpu_memory_utilization` values of 0.9 or 0.95 to balance performance improvements and allocate resources for other purposes.
+* **Block Size Adjustments:** Prefer a `block_size` of 32, as it seems to provide a better throughput balance.
+* **Experiment with Quantization:** Continue using `fp8` quantization to leverage its performance benefits.
+* **Explore Pipeline Parallelism:** Explore `pipeline_parallel_size` only if more GPUs become available.
+* **Disable CPU Offloading:** Set `cpu_offload_gb` to 0 as it was observed to decrease performance.
+* **Batch Size Optimization:** Utilize a `max_num_seqs` of 512 to exploit the model's capacity for handling larger sequences effectively.
+* **Mixed Precision Usage:** Ensure `dtype` is set to `float16` for training to take advantage of mixed precision benefits.
 
 
 **Next Steps:**

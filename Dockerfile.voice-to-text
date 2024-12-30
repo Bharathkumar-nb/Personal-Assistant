@@ -5,13 +5,20 @@ RUN apt-get update && apt-get install -y \
     ffmpeg \
     portaudio19-dev \
     pulseaudio \
+    procps \
     && rm -rf /var/lib/apt/lists/*
 
-# Pre-download Whisper model weights
+
 RUN pip install --no-cache-dir torch openai-whisper
 
 COPY requirements.txt .
 RUN pip install --no-cache-dir -r requirements.txt
 
 COPY . .
-CMD ["python", "voice_to_text.py"]
+
+# Copy the entrypoint script
+COPY vtt_entrypoint.sh /vtt_entrypoint.sh
+RUN chmod +x /vtt_entrypoint.sh
+
+# Use the entrypoint script
+ENTRYPOINT ["/vtt_entrypoint.sh"]
